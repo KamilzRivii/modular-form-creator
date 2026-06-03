@@ -19,21 +19,20 @@ export function ResourcesListPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
   useEffect(() => {
-    fetchResources()
-  }, [])
-
-  async function fetchResources() {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await getResources({ sortOrder: 'desc' })
-      setResources(data.items)
-    } catch {
-      setError('Failed to load resources.')
-    } finally {
-      setLoading(false)
+    async function fetchResources() {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getResources({ sortOrder: 'desc' })
+        setResources(data.items)
+      } catch {
+        setError('Failed to load resources.')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    void fetchResources()
+  }, [])
 
   async function handleCreate() {
     if (!newName.trim()) {

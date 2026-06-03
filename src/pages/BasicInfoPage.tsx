@@ -38,23 +38,23 @@ export function BasicInfoPage() {
 
   useEffect(() => {
     if (!resourceId) return
-    fetchResource()
-  }, [resourceId])
-
-  async function fetchResource() {
-    try {
-      setLoading(true)
-      setFetchError(null)
-      const data = await getResource(resourceId!)
-      setResource(data)
-      const buffer = getBuffer(String(data.resourceId))
-      setForm({ ...EMPTY_FORM, ...data.basicInfo, ...buffer.basicInfo })
-    } catch {
-      setFetchError('Failed to load resource.')
-    } finally {
-      setLoading(false)
+    const id = resourceId
+    async function fetchResource() {
+      try {
+        setLoading(true)
+        setFetchError(null)
+        const data = await getResource(id)
+        setResource(data)
+        const buffer = getBuffer(String(data.resourceId))
+        setForm({ ...EMPTY_FORM, ...data.basicInfo, ...buffer.basicInfo })
+      } catch {
+        setFetchError('Failed to load resource.')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    void fetchResource()
+  }, [resourceId, getBuffer])
 
   function validate(): boolean {
     const next: Partial<BasicInfo> = {}

@@ -19,21 +19,21 @@ export function ResourceOverviewPage() {
 
   useEffect(() => {
     if (!resourceId) return
-    fetchResource()
-  }, [resourceId])
-
-  async function fetchResource() {
-    try {
-      setLoading(true)
-      setError(null)
-      const data = await getResource(resourceId!)
-      setResource(data)
-    } catch {
-      setError('Resource not found.')
-    } finally {
-      setLoading(false)
+    const id = resourceId
+    async function fetchResource() {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await getResource(id)
+        setResource(data)
+      } catch {
+        setError('Resource not found.')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
+    void fetchResource()
+  }, [resourceId])
 
   async function handleProvision() {
     if (!resource) return

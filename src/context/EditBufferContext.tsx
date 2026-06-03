@@ -57,6 +57,7 @@ export function EditBufferProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useEditBuffer() {
   const ctx = useContext(EditBufferContext)
   if (!ctx) throw new Error('useEditBuffer must be used within EditBufferProvider')
