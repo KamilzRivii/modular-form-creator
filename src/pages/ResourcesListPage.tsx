@@ -121,6 +121,7 @@ export function ResourcesListPage() {
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             error={createError ?? undefined}
+            helperText="This name cannot be changed after creation."
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             autoFocus
           />
