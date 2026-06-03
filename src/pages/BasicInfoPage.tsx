@@ -24,7 +24,7 @@ const EMPTY_FORM: BasicInfo = {
 export function BasicInfoPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
-  const { setBasicInfoBuffer } = useEditBuffer()
+  const { setBasicInfoBuffer, getBuffer } = useEditBuffer()
 
   const [resource, setResource] = useState<Resource | null>(null)
   const [loading, setLoading] = useState(true)
@@ -47,7 +47,8 @@ export function BasicInfoPage() {
       setFetchError(null)
       const data = await getResource(resourceId!)
       setResource(data)
-      setForm({ ...EMPTY_FORM, ...data.basicInfo })
+      const buffer = getBuffer(String(data.resourceId))
+      setForm({ ...EMPTY_FORM, ...data.basicInfo, ...buffer.basicInfo })
     } catch {
       setFetchError('Failed to load resource.')
     } finally {

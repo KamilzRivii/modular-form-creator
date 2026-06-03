@@ -25,7 +25,7 @@ const EMPTY_FORM: ProjectDetails = {
 export function ProjectDetailsPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
-  const { setProjectDetailsBuffer } = useEditBuffer()
+  const { setProjectDetailsBuffer, getBuffer } = useEditBuffer()
 
   const [resource, setResource] = useState<Resource | null>(null)
   const [loading, setLoading] = useState(true)
@@ -48,7 +48,8 @@ export function ProjectDetailsPage() {
       setFetchError(null)
       const data = await getResource(resourceId!)
       setResource(data)
-      setForm({ ...EMPTY_FORM, ...data.projectDetails })
+      const buffer = getBuffer(String(data.resourceId))
+      setForm({ ...EMPTY_FORM, ...data.projectDetails, ...buffer.projectDetails })
     } catch {
       setFetchError('Failed to load resource.')
     } finally {
