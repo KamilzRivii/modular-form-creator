@@ -3,25 +3,19 @@ import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { Badge, Button, Card } from '../design-system'
 import { getResource, provisionResource } from '../api/resources'
-import type { BasicInfo, ProjectDetails, Resource } from '../api/types'
-
-export interface EditBuffer {
-  basicInfo?: Partial<BasicInfo>
-  projectDetails?: Partial<ProjectDetails>
-}
+import type { Resource } from '../api/types'
+import { useEditBuffer } from '../context/EditBufferContext'
 
 export function ResourceOverviewPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
+  const { getBuffer } = useEditBuffer()
 
   const [resource, setResource] = useState<Resource | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [provisioning, setProvisioning] = useState(false)
   const [provisionError, setProvisionError] = useState<string | null>(null)
-
-  // Buffer for completed resource edits — intentionally in-memory only
-  const [editBuffer, setEditBuffer] = useState<EditBuffer>({})
 
   useEffect(() => {
     if (!resourceId) return
@@ -62,7 +56,8 @@ export function ResourceOverviewPage() {
   const projectDetailsComplete = isProjectDetailsComplete(resource)
   const canProvision = resource.status === 'draft' && basicInfoComplete && projectDetailsComplete
   const isCompleted = resource.status === 'completed'
-  const hasBuffer = Object.keys(editBuffer).length > 0
+  const buffer = getBuffer(String(resource.resourceId))
+  const hasBuffer = !!(buffer.basicInfo || buffer.projectDetails)
 
   const projectDetailsLocked = resource.status === 'draft' && !basicInfoComplete
 

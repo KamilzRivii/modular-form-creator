@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Button, Input, Select } from '../design-system'
 import { getResource, updateBasicInfo } from '../api/resources'
 import type { BasicInfo, Resource } from '../api/types'
+import { useEditBuffer } from '../context/EditBufferContext'
 
 const PRIORITY_OPTIONS = [
   { value: '', label: 'Select priority' },
@@ -23,6 +24,7 @@ const EMPTY_FORM: BasicInfo = {
 export function BasicInfoPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
+  const { setBasicInfoBuffer } = useEditBuffer()
 
   const [resource, setResource] = useState<Resource | null>(null)
   const [loading, setLoading] = useState(true)
@@ -72,10 +74,8 @@ export function BasicInfoPage() {
     if (!resource || !validate()) return
 
     if (resource.status === 'completed') {
-      // completed resource — navigate back, caller handles buffer
-      navigate(`/resources/${resource.resourceId}`, {
-        state: { basicInfoBuffer: form },
-      })
+      setBasicInfoBuffer(String(resource.resourceId), form)
+      navigate(`/resources/${resource.resourceId}`)
       return
     }
 

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Button, CheckboxGroup, Input, Select } from '../design-system'
 import { getResource, updateProjectDetails } from '../api/resources'
 import type { ProjectDetails, Resource } from '../api/types'
+import { useEditBuffer } from '../context/EditBufferContext'
 
 const CATEGORY_OPTIONS = [
   { value: '', label: 'Select category' },
@@ -24,6 +25,7 @@ const EMPTY_FORM: ProjectDetails = {
 export function ProjectDetailsPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
+  const { setProjectDetailsBuffer } = useEditBuffer()
 
   const [resource, setResource] = useState<Resource | null>(null)
   const [loading, setLoading] = useState(true)
@@ -72,9 +74,8 @@ export function ProjectDetailsPage() {
     if (!resource || !validate()) return
 
     if (resource.status === 'completed') {
-      navigate(`/resources/${resource.resourceId}`, {
-        state: { projectDetailsBuffer: form },
-      })
+      setProjectDetailsBuffer(String(resource.resourceId), form)
+      navigate(`/resources/${resource.resourceId}`)
       return
     }
 
