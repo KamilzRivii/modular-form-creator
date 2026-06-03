@@ -1,26 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { Button, Input, Select } from '../design-system'
-import { getResource, updateBasicInfo } from '../api/resources'
-import type { BasicInfo, Resource } from '../api/types'
+import { Button, CheckboxGroup, Input, Select } from '../design-system'
+import { getResource, updateProjectDetails } from '../api/resources'
+import type { ProjectDetails, Resource } from '../api/types'
 
-const PRIORITY_OPTIONS = [
-  { value: '', label: 'Select priority' },
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
+const CATEGORY_OPTIONS = [
+  { value: '', label: 'Select category' },
+  { value: 'internal', label: 'Internal' },
+  { value: 'external', label: 'External' },
+  { value: 'vendor', label: 'Vendor' },
 ]
 
-const EMPTY_FORM: BasicInfo = {
-  resourceName: '',
-  owner: '',
-  email: '',
-  description: '',
-  priority: '',
+const AVAILABLE_OPTIONS = ['FE devs', 'BE devs', 'Designer', 'Data Eng', 'Product Owner']
+
+const EMPTY_FORM: ProjectDetails = {
+  projectName: '',
+  budget: '',
+  category: '',
+  options: [],
 }
 
-export function BasicInfoPage() {
+export function ProjectDetailsPage() {
   const { resourceId } = useParams<{ resourceId: string }>()
   const navigate = useNavigate()
 
@@ -28,8 +29,8 @@ export function BasicInfoPage() {
   const [loading, setLoading] = useState(true)
   const [fetchError, setFetchError] = useState<string | null>(null)
 
-  const [form, setForm] = useState<BasicInfo>(EMPTY_FORM)
-  const [errors, setErrors] = useState<Partial<BasicInfo>>({})
+  const [form, setForm] = useState<ProjectDetails>(EMPTY_FORM)
+  const [errors, setErrors] = useState<Partial<Record<keyof ProjectDetails, string>>>({})
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
@@ -45,7 +46,7 @@ export function BasicInfoPage() {
       setFetchError(null)
       const data = await getResource(resourceId!)
       setResource(data)
-      setForm({ ...EMPTY_FORM, ...data.basicInfo })
+      setForm({ ...EMPTY_FORM, ...data.projectDetails })
     } catch {
       setFetchError('Failed to load resource.')
     } finally {
@@ -54,16 +55,15 @@ export function BasicInfoPage() {
   }
 
   function validate(): boolean {
-    const next: Partial<BasicInfo> = {}
-    if (!form.resourceName.trim()) next.resourceName = 'Required'
-    if (!form.owner.trim()) next.owner = 'Required'
-    if (!form.email.trim()) {
-      next.email = 'Required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      next.email = 'Invalid email address'
+    const next: Partial<Record<keyof ProjectDetails, string>> = {}
+    if (!form.projectName.trim()) next.projectName = 'Required'
+    if (!form.budget.trim()) {
+      next.budget = 'Required'
+    } else if (!/^\d+$/.test(form.budget.trim())) {
+      next.budget = 'Must be a whole number'
     }
-    if (!form.description.trim()) next.description = 'Required'
-    if (!form.priority) next.priority = 'Required'
+    if (!form.category) next.category = 'Required'
+    if (form.options.length === 0) next.options = 'At least one team member is required'
     setErrors(next)
     return Object.keys(next).length === 0
   }
@@ -72,9 +72,8 @@ export function BasicInfoPage() {
     if (!resource || !validate()) return
 
     if (resource.status === 'completed') {
-      // completed resource — navigate back, caller handles buffer
       navigate(`/resources/${resource.resourceId}`, {
-        state: { basicInfoBuffer: form },
+        state: { projectDetailsBuffer: form },
       })
       return
     }
@@ -82,7 +81,7 @@ export function BasicInfoPage() {
     try {
       setSaving(true)
       setSaveError(null)
-      await updateBasicInfo(resource.resourceId, form)
+      await updateProjectDetails(resource.resourceId, form)
       setSaved(true)
       setTimeout(() => navigate(`/resources/${resource.resourceId}`), 800)
     } catch (err) {
@@ -92,7 +91,7 @@ export function BasicInfoPage() {
     }
   }
 
-  function handleField(field: keyof BasicInfo, value: string) {
+  function handleField(field: keyof Omit<ProjectDetails, 'options'>, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
     setSaved(false)
@@ -112,7 +111,7 @@ export function BasicInfoPage() {
       </TopBar>
 
       <Header>
-        <PageTitle>Basic Info</PageTitle>
+        <PageTitle>Project Details</PageTitle>
         {isCompleted && (
           <CompletedNotice>
             This resource is completed. Changes will be saved as a draft and must be submitted manually.
@@ -122,38 +121,34 @@ export function BasicInfoPage() {
 
       <Form>
         <Input
-          label="Resource name"
-          value={form.resourceName}
-          state="locked"
-          tooltip="Resource name cannot be changed after creation"
+          label="Project name"
+          value={form.projectName}
+          onChange={(e) => handleField('projectName', e.target.value)}
+          error={errors.projectName}
         />
         <Input
-          label="Owner"
-          value={form.owner}
-          onChange={(e) => handleField('owner', e.target.value)}
-          error={errors.owner}
-        />
-        <Input
-          label="Email"
-          type="email"
-          value={form.email}
-          onChange={(e) => handleField('email', e.target.value)}
-          error={errors.email}
-        />
-        <Input
-          label="Description"
-          value={form.description}
-          onChange={(e) => handleField('description', e.target.value)}
-          error={errors.description}
-          multiline
-          rows={4}
+          label="Budget"
+          value={form.budget}
+          onChange={(e) => handleField('budget', e.target.value)}
+          error={errors.budget}
         />
         <Select
-          label="Priority"
-          value={form.priority}
-          options={PRIORITY_OPTIONS}
-          onChange={(e) => handleField('priority', e.target.value)}
-          error={errors.priority}
+          label="Category"
+          value={form.category}
+          options={CATEGORY_OPTIONS}
+          onChange={(e) => handleField('category', e.target.value)}
+          error={errors.category}
+        />
+        <CheckboxGroup
+          label="Team members"
+          options={AVAILABLE_OPTIONS}
+          value={form.options}
+          onChange={(next) => {
+            setForm((prev) => ({ ...prev, options: next }))
+            setErrors((prev) => ({ ...prev, options: undefined }))
+            setSaved(false)
+          }}
+          error={errors.options}
         />
 
         {saveError && <ErrorText>{saveError}</ErrorText>}

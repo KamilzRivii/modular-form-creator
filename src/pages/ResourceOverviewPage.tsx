@@ -46,8 +46,8 @@ export function ResourceOverviewPage() {
     try {
       setProvisioning(true)
       setProvisionError(null)
-      const updated = await provisionResource(resource.resourceId)
-      setResource(updated)
+      const result = await provisionResource(resource.resourceId)
+      setResource(result.resource)
     } catch (err) {
       setProvisionError(err instanceof Error ? err.message : 'Provisioning failed.')
     } finally {

@@ -2,10 +2,10 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ResourcesListPage } from './pages/ResourcesListPage'
 import { ResourceOverviewPage } from './pages/ResourceOverviewPage'
 import { BasicInfoPage } from './pages/BasicInfoPage'
+import { ProjectDetailsPage } from './pages/ProjectDetailsPage'
 
 // Pages — to be implemented in upcoming steps
 const ResourceDetailsPage = () => <div>Resource Details</div>
-const ProjectDetailsPage = () => <div>Project Details</div>
 
 function App() {
   return (

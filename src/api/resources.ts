@@ -62,10 +62,13 @@ export function updateProjectDetails(
   })
 }
 
-export function provisionResource(id: string | number): Promise<Resource> {
-  return request<Resource>(`/resources/${id}/provisioning`, {
-    method: 'PATCH',
-  })
+export function provisionResource(
+  id: string | number,
+): Promise<{ alreadyCompleted: boolean; resource: Resource }> {
+  return request<{ alreadyCompleted: boolean; resource: Resource }>(
+    `/resources/${id}/provisioning`,
+    { method: 'PATCH' },
+  )
 }
 
 export function fullUpdateResource(
