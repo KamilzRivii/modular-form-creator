@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
+import { ResourcesListPage } from './pages/ResourcesListPage'
 
 // Pages — to be implemented in upcoming steps
-const ResourcesListPage = () => <div>Resources List</div>
 const ResourceOverviewPage = () => <div>Resource Overview</div>
 const ResourceDetailsPage = () => <div>Resource Details</div>
 const BasicInfoPage = () => <div>Basic Info</div>
