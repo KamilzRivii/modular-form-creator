@@ -1,23 +1,23 @@
-import styled from 'styled-components'
+import { Navigate, Route, Routes } from 'react-router-dom'
+
+// Pages — to be implemented in upcoming steps
+const ResourcesListPage = () => <div>Resources List</div>
+const ResourceOverviewPage = () => <div>Resource Overview</div>
+const ResourceDetailsPage = () => <div>Resource Details</div>
+const BasicInfoPage = () => <div>Basic Info</div>
+const ProjectDetailsPage = () => <div>Project Details</div>
 
 function App() {
   return (
-    <AppShell>
-      <Message>Good luck!</Message>
-    </AppShell>
+    <Routes>
+      <Route path="/" element={<Navigate to="/resources" replace />} />
+      <Route path="/resources" element={<ResourcesListPage />} />
+      <Route path="/resources/:resourceId" element={<ResourceOverviewPage />} />
+      <Route path="/resources/:resourceId/details" element={<ResourceDetailsPage />} />
+      <Route path="/resources/:resourceId/basic-info" element={<BasicInfoPage />} />
+      <Route path="/resources/:resourceId/project-details" element={<ProjectDetailsPage />} />
+    </Routes>
   )
 }
-
-const AppShell = styled.div`
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const Message = styled.h1`
-  font-size: 2.5rem;
-  color: ${({ theme }) => theme.colors.inkStrong};
-`
 
 export default App
