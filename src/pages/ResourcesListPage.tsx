@@ -265,6 +265,10 @@ const ResourceName = styled.span`
   font-size: 0.9375rem;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.ink};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 400px;
 `
 
 const DrawerBody = styled.div`

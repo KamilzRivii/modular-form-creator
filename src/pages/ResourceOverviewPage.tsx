@@ -88,7 +88,6 @@ export function ResourceOverviewPage() {
 
       <HeroCard>
         <HeroLeft>
-          <ResourceId>#{resource.resourceId}</ResourceId>
           <PageTitle>{resource.name}</PageTitle>
           <HeroMeta>
             <Badge variant={isCompleted ? 'success' : 'neutral'}>{resource.status}</Badge>
@@ -214,18 +213,14 @@ const HeroCard = styled.div`
 
 const HeroLeft = styled.div``
 
-const ResourceId = styled.p`
-  font-family: ${({ theme }) => theme.typography.body};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.inkMuted};
-  margin: 0 0 ${({ theme }) => theme.spacing.xs};
-`
-
 const PageTitle = styled.h1`
   font-family: ${({ theme }) => theme.typography.heading};
   font-size: 1.875rem;
   color: ${({ theme }) => theme.colors.inkStrong};
   margin: 0 0 ${({ theme }) => theme.spacing.md};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const HeroMeta = styled.div`

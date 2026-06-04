@@ -200,6 +200,10 @@ const BackButton = styled.button`
   color: ${({ theme }) => theme.colors.primary};
   font-size: 0.875rem;
   padding: 0;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primaryStrong};

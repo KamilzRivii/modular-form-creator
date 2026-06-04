@@ -166,6 +166,10 @@ const BackButton = styled.button`
   color: ${({ theme }) => theme.colors.primary};
   font-size: 0.875rem;
   padding: 0;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primaryStrong};
@@ -188,6 +192,9 @@ const PageTitle = styled.h1`
   font-size: 1.75rem;
   color: ${({ theme }) => theme.colors.inkStrong};
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const BufferNotice = styled.p`
@@ -246,6 +253,7 @@ const FieldWrapper = styled.div<{ $fullWidth?: boolean }>`
   grid-column: ${({ $fullWidth }) => ($fullWidth ? '1 / -1' : 'auto')};
   padding-bottom: ${({ theme }) => theme.spacing.sm};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  min-width: 0;
 `
 
 const FieldLabel = styled.p`
@@ -264,6 +272,9 @@ const FieldValue = styled.p<{ $buffered?: boolean }>`
   color: ${({ theme, $buffered }) => ($buffered ? theme.colors.accent : theme.colors.ink)};
   margin: 0;
   font-weight: ${({ $buffered }) => ($buffered ? 600 : 400)};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `
 
 const StatusText = styled.p<{ $error?: boolean }>`
