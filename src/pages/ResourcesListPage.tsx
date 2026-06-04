@@ -75,26 +75,38 @@ export function ResourcesListPage() {
 
   return (
     <PageWrapper>
-      <Header>
-        <Title>Resources</Title>
+      <PageHeader>
+        <div>
+          <PageTitle>Resources</PageTitle>
+          {!loading && !error && (
+            <PageSubtitle>{resources.length} resource{resources.length !== 1 ? 's' : ''}</PageSubtitle>
+          )}
+        </div>
         <Button variant="primary" onClick={() => setDrawerOpen(true)}>
           + New Resource
         </Button>
-      </Header>
+      </PageHeader>
 
       {loading && <StatusText>Loading...</StatusText>}
       {error && <StatusText $error>{error}</StatusText>}
 
       {!loading && !error && resources.length === 0 && (
-        <StatusText>No resources yet. Create your first one.</StatusText>
+        <EmptyState>
+          <EmptyTitle>No resources yet</EmptyTitle>
+          <EmptyHint>Create your first resource to get started.</EmptyHint>
+          <Button variant="primary" onClick={() => setDrawerOpen(true)}>+ New Resource</Button>
+        </EmptyState>
       )}
 
       {!loading && !error && resources.length > 0 && (
         <List>
-          {resources.map((resource) => (
+          {resources.map((resource, index) => (
             <ListRow key={resource.resourceId} onClick={() => navigate(`/resources/${resource.resourceId}`)}>
               <RowLeft>
-                <ResourceName>{resource.name}</ResourceName>
+                <ResourceIndex>#{index + 1}</ResourceIndex>
+                <RowInfo>
+                  <ResourceName>{resource.name}</ResourceName>
+                </RowInfo>
                 <Badge variant={resource.status === 'completed' ? 'success' : 'neutral'}>
                   {resource.status}
                 </Badge>
@@ -147,28 +159,61 @@ function TrashIcon() {
 }
 
 const PageWrapper = styled.div`
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing.xl};
 `
 
-const Header = styled.div`
+const PageHeader = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
 `
 
-const Title = styled.h1`
+const PageTitle = styled.h1`
   font-family: ${({ theme }) => theme.typography.heading};
-  font-size: 1.75rem;
+  font-size: 2rem;
   color: ${({ theme }) => theme.colors.inkStrong};
+  margin: 0 0 ${({ theme }) => theme.spacing.xs};
+`
+
+const PageSubtitle = styled.p`
+  font-family: ${({ theme }) => theme.typography.body};
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.inkMuted};
   margin: 0;
 `
 
 const StatusText = styled.p<{ $error?: boolean }>`
   color: ${({ theme, $error }) => ($error ? theme.colors.warning : theme.colors.inkMuted)};
   font-family: ${({ theme }) => theme.typography.body};
+`
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: ${({ theme }) => theme.spacing.xxl} ${({ theme }) => theme.spacing.xl};
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px dashed ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+`
+
+const EmptyTitle = styled.p`
+  font-family: ${({ theme }) => theme.typography.heading};
+  font-size: 1.125rem;
+  color: ${({ theme }) => theme.colors.ink};
+  margin: 0;
+`
+
+const EmptyHint = styled.p`
+  font-family: ${({ theme }) => theme.typography.body};
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.inkMuted};
+  margin: 0;
 `
 
 const List = styled.ul`
@@ -184,14 +229,15 @@ const ListRow = styled.li`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radii.md};
   cursor: pointer;
-  transition: box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
 
   &:hover {
+    border-color: ${({ theme }) => theme.colors.primary};
     box-shadow: ${({ theme }) => theme.shadows.card};
   }
 `
@@ -202,9 +248,22 @@ const RowLeft = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `
 
+const ResourceIndex = styled.span`
+  font-family: ${({ theme }) => theme.typography.body};
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.inkMuted};
+  min-width: 28px;
+`
+
+const RowInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const ResourceName = styled.span`
   font-family: ${({ theme }) => theme.typography.body};
-  font-weight: 500;
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: ${({ theme }) => theme.colors.ink};
 `
 

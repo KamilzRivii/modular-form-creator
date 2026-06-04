@@ -99,7 +99,7 @@ export function ResourceDetailsPage() {
       </Header>
 
       <Sections>
-        <Section>
+        <SectionCard>
           <SectionTitle>Basic Info</SectionTitle>
           <FieldGrid>
             <Field label="Resource name" value={displayBasicInfo.resourceName} buffered={!!buffer.basicInfo?.resourceName} />
@@ -108,13 +108,13 @@ export function ResourceDetailsPage() {
             <Field label="Priority" value={displayBasicInfo.priority} buffered={!!buffer.basicInfo?.priority} />
             <Field label="Description" value={displayBasicInfo.description} buffered={!!buffer.basicInfo?.description} fullWidth />
           </FieldGrid>
-        </Section>
+        </SectionCard>
 
-        <Section>
+        <SectionCard>
           <SectionTitle>Project Details</SectionTitle>
           <FieldGrid>
             <Field label="Project name" value={displayProjectDetails.projectName} buffered={!!buffer.projectDetails?.projectName} />
-            <Field label="Budget" value={displayProjectDetails.budget} buffered={!!buffer.projectDetails?.budget} />
+            <Field label="Budget" value={displayProjectDetails.budget ? `${displayProjectDetails.budget}` : '—'} buffered={!!buffer.projectDetails?.budget} />
             <Field label="Category" value={displayProjectDetails.category} buffered={!!buffer.projectDetails?.category} />
             <Field
               label="Team members"
@@ -123,7 +123,7 @@ export function ResourceDetailsPage() {
               fullWidth
             />
           </FieldGrid>
-        </Section>
+        </SectionCard>
       </Sections>
     </PageWrapper>
   )
@@ -207,24 +207,35 @@ const ErrorText = styled.p`
 const Sections = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.xl};
+  gap: ${({ theme }) => theme.spacing.lg};
 `
 
-const Section = styled.div``
+const SectionCard = styled.div`
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  overflow: hidden;
+  box-shadow: ${({ theme }) => theme.shadows.card};
+`
 
 const SectionTitle = styled.h2`
   font-family: ${({ theme }) => theme.typography.heading};
-  font-size: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   color: ${({ theme }) => theme.colors.inkMuted};
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 ${({ theme }) => theme.spacing.md};
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.xl};
+  background: ${({ theme }) => theme.colors.surfaceAlt};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const FieldGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing.md};
+  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
+  gap: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
@@ -233,23 +244,26 @@ const FieldGrid = styled.div`
 
 const FieldWrapper = styled.div<{ $fullWidth?: boolean }>`
   grid-column: ${({ $fullWidth }) => ($fullWidth ? '1 / -1' : 'auto')};
+  padding-bottom: ${({ theme }) => theme.spacing.sm};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const FieldLabel = styled.p`
   font-family: ${({ theme }) => theme.typography.body};
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: ${({ theme }) => theme.colors.inkMuted};
   margin: 0 0 ${({ theme }) => theme.spacing.xs};
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  font-weight: 600;
 `
 
 const FieldValue = styled.p<{ $buffered?: boolean }>`
   font-family: ${({ theme }) => theme.typography.body};
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: ${({ theme, $buffered }) => ($buffered ? theme.colors.accent : theme.colors.ink)};
   margin: 0;
-  font-weight: ${({ $buffered }) => ($buffered ? 500 : 400)};
+  font-weight: ${({ $buffered }) => ($buffered ? 600 : 400)};
 `
 
 const StatusText = styled.p<{ $error?: boolean }>`

@@ -112,71 +112,74 @@ export function ProjectDetailsPage() {
         </BackButton>
       </TopBar>
 
-      <Header>
-        <PageTitle>Project Details</PageTitle>
-        {isCompleted && (
-          <CompletedNotice>
-            This resource is completed. Changes will be saved as a draft and must be submitted manually.
-          </CompletedNotice>
-        )}
-      </Header>
+      {isCompleted && (
+        <CompletedBanner>
+          This resource is completed — changes will be buffered and must be submitted manually from the Details page.
+        </CompletedBanner>
+      )}
 
-      <Form>
-        <Input
-          label="Project name"
-          value={form.projectName}
-          onChange={(e) => handleField('projectName', e.target.value)}
-          error={errors.projectName}
-        />
-        <Input
-          label="Budget"
-          value={form.budget}
-          onChange={(e) => handleField('budget', e.target.value)}
-          error={errors.budget}
-        />
-        <Select
-          label="Category"
-          value={form.category}
-          options={CATEGORY_OPTIONS}
-          onChange={(e) => handleField('category', e.target.value)}
-          error={errors.category}
-        />
-        <CheckboxGroup
-          label="Team members"
-          options={AVAILABLE_OPTIONS}
-          value={form.options}
-          onChange={(next) => {
-            setForm((prev) => ({ ...prev, options: next }))
-            setErrors((prev) => ({ ...prev, options: undefined }))
-            setSaved(false)
-          }}
-          error={errors.options}
-        />
+      <FormCard>
+        <FormCardHeader>
+          <PageTitle>Project Details</PageTitle>
+        </FormCardHeader>
 
-        {saveError && <ErrorText>{saveError}</ErrorText>}
+        <Form>
+          <Input
+            label="Project name"
+            value={form.projectName}
+            onChange={(e) => handleField('projectName', e.target.value)}
+            error={errors.projectName}
+          />
+          <Input
+            label="Budget"
+            value={form.budget}
+            onChange={(e) => handleField('budget', e.target.value)}
+            error={errors.budget}
+          />
+          <Select
+            label="Category"
+            value={form.category}
+            options={CATEGORY_OPTIONS}
+            onChange={(e) => handleField('category', e.target.value)}
+            error={errors.category}
+          />
+          <CheckboxGroup
+            label="Team members"
+            options={AVAILABLE_OPTIONS}
+            value={form.options}
+            onChange={(next) => {
+              setForm((prev) => ({ ...prev, options: next }))
+              setErrors((prev) => ({ ...prev, options: undefined }))
+              setSaved(false)
+            }}
+            error={errors.options}
+          />
 
-        <FormActions>
-          <Button
-            variant="secondary"
-            onClick={() => navigate(`/resources/${resource.resourceId}`)}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="primary"
-            state={saving ? 'disabled' : 'normal'}
-            onClick={handleSave}
-          >
-            {saving ? 'Saving...' : saved ? 'Saved!' : isCompleted ? 'Save as draft' : 'Save'}
-          </Button>
-        </FormActions>
-      </Form>
+          {saveError && <ErrorText>{saveError}</ErrorText>}
+
+          <FormActions>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(`/resources/${resource.resourceId}`)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primary"
+              state={saving ? 'disabled' : 'normal'}
+              onClick={handleSave}
+            >
+              {saving ? 'Saving...' : saved ? 'Saved!' : isCompleted ? 'Save as draft' : 'Save'}
+            </Button>
+          </FormActions>
+        </Form>
+      </FormCard>
     </PageWrapper>
   )
 }
 
 const PageWrapper = styled.div`
-  max-width: 560px;
+  max-width: 600px;
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing.xl};
 `
@@ -199,21 +202,35 @@ const BackButton = styled.button`
   }
 `
 
-const Header = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+const CompletedBanner = styled.div`
+  background: ${({ theme }) => theme.colors.accentSoft};
+  border-left: 3px solid ${({ theme }) => theme.colors.accent};
+  border-radius: ${({ theme }) => theme.radii.sm};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  font-family: ${({ theme }) => theme.typography.body};
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.accent};
+`
+
+const FormCard = styled.div`
+  background: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  overflow: hidden;
+  box-shadow: ${({ theme }) => theme.shadows.card};
+`
+
+const FormCardHeader = styled.div`
+  padding: ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing.xl};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.surfaceAlt};
 `
 
 const PageTitle = styled.h1`
   font-family: ${({ theme }) => theme.typography.heading};
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   color: ${({ theme }) => theme.colors.inkStrong};
-  margin: 0 0 ${({ theme }) => theme.spacing.sm};
-`
-
-const CompletedNotice = styled.p`
-  font-family: ${({ theme }) => theme.typography.body};
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.accent};
   margin: 0;
 `
 
@@ -221,13 +238,15 @@ const Form = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
 `
 
 const FormActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: ${({ theme }) => theme.spacing.sm};
-  margin-top: ${({ theme }) => theme.spacing.sm};
+  padding-top: ${({ theme }) => theme.spacing.md};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const StatusText = styled.p<{ $error?: boolean }>`
