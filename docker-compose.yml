@@ -1,4 +1,14 @@
 services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: modular-form-creator-frontend
+    ports:
+      - "4173:4173"
+    depends_on:
+      - backend
+
   backend:
     build: ./backend
     container_name: modular-form-creator-backend
@@ -7,9 +17,10 @@ services:
     environment:
       PORT: "5001"
       MONGO_URI: "mongodb://mongo:27017/modular_form_creator"
-      CORS_ORIGIN: "http://localhost:5173"
+      CORS_ORIGIN: "http://localhost:4173"
     depends_on:
       - mongo
+
   mongo:
     image: mongo:7
     container_name: modular-form-creator-mongo
