@@ -17,6 +17,7 @@ export function ResourcesListPage() {
   const [creating, setCreating] = useState(false)
 
   const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [confirmResource, setConfirmResource] = useState<Resource | null>(null)
 
   useEffect(() => {
     async function fetchResources() {
@@ -53,15 +54,20 @@ export function ResourcesListPage() {
     }
   }
 
-  async function handleDelete(e: React.MouseEvent, resource: Resource) {
+  function handleDeleteClick(e: React.MouseEvent, resource: Resource) {
     e.stopPropagation()
-    if (!window.confirm(`Delete "${resource.name}"?`)) return
+    setConfirmResource(resource)
+  }
+
+  async function handleDeleteConfirm() {
+    if (!confirmResource) return
     try {
-      setDeletingId(resource.resourceId)
-      await deleteResource(resource.resourceId)
-      setResources((prev) => prev.filter((r) => r.resourceId !== resource.resourceId))
+      setDeletingId(confirmResource.resourceId)
+      setConfirmResource(null)
+      await deleteResource(confirmResource.resourceId)
+      setResources((prev) => prev.filter((r) => r.resourceId !== confirmResource.resourceId))
     } catch {
-      alert('Failed to delete resource.')
+      // no-op
     } finally {
       setDeletingId(null)
     }
@@ -115,7 +121,7 @@ export function ResourcesListPage() {
                 variant="ghost"
                 size="small"
                 state={deletingId === resource.resourceId ? 'disabled' : 'normal'}
-                onClick={(e) => handleDelete(e, resource)}
+                onClick={(e) => handleDeleteClick(e, resource)}
                 aria-label="Delete resource"
               >
                 <TrashIcon />
@@ -123,6 +129,25 @@ export function ResourcesListPage() {
             </ListRow>
           ))}
         </List>
+      )}
+
+      {confirmResource && (
+        <ModalOverlay onClick={() => setConfirmResource(null)}>
+          <ModalBox onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>Delete resource</ModalTitle>
+            <ModalMessage>
+              Are you sure you want to delete <strong>{confirmResource.name}</strong>? This action cannot be undone.
+            </ModalMessage>
+            <ModalActions>
+              <Button variant="secondary" onClick={() => setConfirmResource(null)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleDeleteConfirm}>
+                Delete
+              </Button>
+            </ModalActions>
+          </ModalBox>
+        </ModalOverlay>
       )}
 
       <Drawer title="New Resource" isOpen={drawerOpen} onClose={handleDrawerClose}>
@@ -269,6 +294,50 @@ const ResourceName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 400px;
+`
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 33, 43, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+`
+
+const ModalBox = styled.div`
+  background: ${({ theme }) => theme.colors.surface};
+  border-radius: ${({ theme }) => theme.radii.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
+  width: 100%;
+  max-width: 420px;
+  box-shadow: ${({ theme }) => theme.shadows.raised};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing.md};
+`
+
+const ModalTitle = styled.h2`
+  font-family: ${({ theme }) => theme.typography.heading};
+  font-size: 1.125rem;
+  color: ${({ theme }) => theme.colors.inkStrong};
+  margin: 0;
+`
+
+const ModalMessage = styled.p`
+  font-family: ${({ theme }) => theme.typography.body};
+  font-size: 0.9375rem;
+  color: ${({ theme }) => theme.colors.ink};
+  margin: 0;
+  line-height: 1.5;
+`
+
+const ModalActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-top: ${({ theme }) => theme.spacing.sm};
 `
 
 const DrawerBody = styled.div`
